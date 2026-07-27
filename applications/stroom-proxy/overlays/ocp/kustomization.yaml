@@ -8,3 +8,42 @@ resources:
   - namespace.yaml
   - certificate.yaml
   - keystore-password-secret.yaml
+
+# kustomize does not apply `namespace:` to resources produced by helmCharts
+# (inflation runs after the namespace transformer). Patch helm output explicitly.
+patches:
+  - target:
+      kind: ServiceAccount
+      name: stroom-proxy
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: lhm-prod-stroom-proxy
+  - target:
+      kind: ConfigMap
+      name: stroom-proxy
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: lhm-prod-stroom-proxy
+  - target:
+      kind: Service
+      name: stroom-proxy
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: lhm-prod-stroom-proxy
+  - target:
+      kind: StatefulSet
+      name: stroom-proxy
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: lhm-prod-stroom-proxy
+  - target:
+      kind: Ingress
+      name: stroom-proxy
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: lhm-prod-stroom-proxy

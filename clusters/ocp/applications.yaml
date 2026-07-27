@@ -11,10 +11,13 @@ spec:
         elements:
           - name: quay
             wave: "20"
+            namespace: lhm-prod-quay
           - name: openshift-logging
             wave: "20"
+            namespace: openshift-logging
           - name: stroom-proxy
             wave: "20"
+            namespace: lhm-prod-stroom-proxy
   template:
     metadata:
       name: 'app-{{.name}}'
@@ -30,6 +33,8 @@ spec:
         path: 'applications/{{.name}}/overlays/ocp'
       destination:
         server: https://kubernetes.default.svc
+        # Required for helmCharts output (kustomize does not inject ns into helm resources)
+        namespace: '{{.namespace}}'
       syncPolicy:
         automated:
           prune: true
