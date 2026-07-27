@@ -90,6 +90,14 @@ volumeClaims:
       requests:
         storage: 50Gi
 
+# Proxy defaults dataFeedKeysDir to home-relative "data_feed_keys"
+# → /stroom-proxy/data_feed_keys. Chart only mounts content/db/logs/data from
+# the PVC; without this mount OpenShift cannot create that path (read-only root).
+extraVolumeMounts:
+  - name: data
+    mountPath: /stroom-proxy/data_feed_keys
+    subPath: data_feed_keys
+
 # Chart defaults pin UID 1000; overlay strips pod/container securityContext so
 # OpenShift SCC admission can inject the correct context.
 podSecurityContext: {}
