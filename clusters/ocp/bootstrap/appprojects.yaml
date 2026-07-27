@@ -31,7 +31,7 @@ metadata:
   name: applications
   namespace: openshift-gitops
 spec:
-  description: Workload applications (registry, logging)
+  description: Workload applications (registry, logging, stroom-proxy)
   sourceRepos:
     - https://github.com/sigaint-au/sigaint-iac
   destinations:
