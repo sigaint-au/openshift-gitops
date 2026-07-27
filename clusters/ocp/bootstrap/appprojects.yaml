@@ -35,9 +35,8 @@ spec:
   sourceRepos:
     - https://github.com/sigaint-au/sigaint-iac
   destinations:
-    - namespace: 'lhm-prod-*'
-      server: https://kubernetes.default.svc
-    - namespace: 'sigaint-*'
+    # Workload namespaces: lhm-<env>-<app> (e.g. lhm-prod-quay, lhm-dev-stroom-proxy)
+    - namespace: 'lhm-*'
       server: https://kubernetes.default.svc
     - namespace: openshift-logging
       server: https://kubernetes.default.svc
@@ -69,9 +68,8 @@ spec:
   sourceRepos:
     - https://github.com/sigaint-au/sigaint-iac
   destinations:
-    - namespace: 'lhm-prod-*'
-      server: https://kubernetes.default.svc
-    - namespace: 'sigaint-*'
+    # Virt / shared workload namespaces: lhm-<env>-<role> (e.g. lhm-prod-dmz, lhm-dev-vmnet)
+    - namespace: 'lhm-*'
       server: https://kubernetes.default.svc
     - namespace: default
       server: https://kubernetes.default.svc
