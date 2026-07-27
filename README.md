@@ -2,50 +2,23 @@
 
 [![validate](https://github.com/sigaint-au/sigaint-iac/actions/workflows/validate.yaml/badge.svg)](https://github.com/sigaint-au/sigaint-iac/actions/workflows/validate.yaml)
 
-GitOps for Sigaint OpenShift clusters — **OpenShift GitOps (Argo CD)** + **Kustomize**.
+| Cluster | Bootstrap |
+|---------|-----------|
+| `hub` | `clusters/hub/bootstrap/` |
+| `ocp` | `clusters/ocp/bootstrap/` |
 
-| Cluster | Role | Entry |
-|---------|------|--------|
-| `hub` | ACM / management | `clusters/hub/` |
-| `ocp` | Workloads / virtualization | `clusters/ocp/` |
+| Cluster | AppProjects |
+|---------|-------------|
+| `hub` | `infrastructure` |
+| `ocp` | `infrastructure`, `applications`, `virtualization` |
 
-| App prefix | Scope |
-|------------|--------|
-| `hub-*` | Hub infrastructure |
-| `infra-*` | OCP infrastructure |
-| `app-*` | Workloads |
-| `virt-*` | Virtualization |
+Workload / virt namespaces: `lhm-<env>-*` (e.g. `lhm-prod-quay`).
 
 Repo: `https://github.com/sigaint-au/sigaint-iac`
 
-## Layout
-
-```text
-clusters/<cluster>/          # ApplicationSets + bootstrap (per-cluster Argo CD)
-  bootstrap/                 # AppProjects + root Application (apply only on that cluster)
-infrastructure/              # Operators & platform config
-applications/                # Workloads (Quay, OpenShift Logging, Stroom Proxy)
-virtualization/              # KubeVirt / Multus / credentials
-components/                  # Shared Kustomize components
-scripts/validate-kustomize.sh
-```
-
-```text
-<package>/
-  base/
-  overlays/<cluster>/        # ApplicationSets target this path
-```
-
-Each cluster runs **its own** Argo CD. Never apply hub bootstrap on ocp (or vice versa).
-
-## Validate
-
-```bash
-./scripts/validate-kustomize.sh
-# requires: kubectl (helm if a package uses helmCharts)
-```
-
 ## Bootstrap
+
+Apply only this cluster’s bootstrap on that cluster.
 
 ```bash
 git clone https://github.com/sigaint-au/sigaint-iac.git && cd sigaint-iac
@@ -75,7 +48,28 @@ oc get route openshift-gitops-server -n openshift-gitops \
   -o jsonpath='https://{.spec.host}{"\n"}'
 ```
 
-### 2. Optional day-0 RBAC
+### 2. Enable Helm for Kustomize
+
+Required for apps that use `helmCharts` (e.g. stroom-proxy). Patch the default `ArgoCD` CR:
+
+```bash
+oc patch argocd openshift-gitops -n openshift-gitops --type merge \
+  -p '{"spec":{"kustomizeBuildOptions":"--enable-helm"}}'
+```
+
+Equivalent:
+
+```yaml
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+spec:
+  kustomizeBuildOptions: --enable-helm
+```
+
+### 3. Day-0 RBAC (optional)
 
 ```bash
 oc apply -f - <<'EOF'
@@ -92,12 +86,15 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
 EOF
+```
 
-# after projects/apps healthy:
+Remove after AppProjects and apps are healthy:
+
+```bash
 oc delete clusterrolebinding argocd-cluster-admin
 ```
 
-### 3. Root app (this cluster only)
+### 4. Root application
 
 **ocp**
 
@@ -115,12 +112,7 @@ oc apply -f clusters/hub/bootstrap/root-application.yaml
 oc get appprojects,application -n openshift-gitops
 ```
 
-| Cluster | Projects |
-|---------|----------|
-| `hub` | `infrastructure` |
-| `ocp` | `infrastructure`, `applications`, `virtualization` |
-
-### 4. External Secrets (Doppler)
+### 5. External Secrets (Doppler)
 
 ```bash
 oc create namespace external-secrets --dry-run=client -o yaml | oc apply -f -
@@ -131,115 +123,11 @@ oc create secret generic doppler-token-auth-api \
   --dry-run=client -o yaml | oc apply -f -
 ```
 
-Example: `infrastructure/openshift-external-secrets-operator/overlays/<cluster>/doppler-secret.yaml.example`
+Template: `infrastructure/openshift-external-secrets-operator/overlays/<cluster>/doppler-secret.yaml.example`
 
-### 5. Verify
+### 6. Verify
 
 ```bash
 oc get application,applicationset -n openshift-gitops
 oc get application -n openshift-gitops | grep -E '^(hub|infra|app|virt)-'
 ```
-
-## Sync model
-
-| Setting | Value |
-|---------|--------|
-| Policy | automated prune + selfHeal |
-| Apply | Server-Side Apply |
-| Revision | `main` (pin for freezes) |
-| Waves | see [`components/`](components/README.md) |
-
-```text
--10 Namespace
- -5 OperatorGroup / CatalogSource
- -1 Subscription
-  5 Secrets / Certificates / ExternalSecretsConfig
- 10 Primary CRs (ClusterSecretStore, StorageCluster, MetalLB, …)
-15+ Dependents (ExternalSecret, pools, NNCPs, …)
-```
-
-## Operator channels
-
-OLM Subscription channels pinned in this repo (package path under `infrastructure/`):
-
-| Operator package | Channel | Clusters |
-|------------------|---------|----------|
-| `advanced-cluster-management` | `release-2.15` | hub |
-| `advanced-cluster-security-operator` | `stable` | ocp |
-| `cloudnative-pg-operator` | `stable-v1` | ocp |
-| `cluster-observability-operator` | `stable` | optional |
-| `compliance-operator` | `stable` | ocp |
-| `container-security-operator` | `stable-3.16` | ocp |
-| `crunchy-postgres-operator` | `v5` | optional |
-| `grafana-operator` | `v5` | ocp |
-| `kiali-operator` | `stable` | ocp |
-| `kube-descheduler-operator` | `stable` | ocp |
-| `local-storage` | `stable` | hub, ocp |
-| `node-feature-discovery-operator` | `stable` | ocp |
-| `nvidia-gpu-operator` | `stable` (certified) | ocp |
-| `loki-operator` | `stable-6.6` | ocp |
-| `lvm-storage` | `stable-4.22` | hub |
-| `metallb-operator` | `stable` | ocp |
-| `nmstate` | `stable` | ocp |
-| `openshift-node-tuning` | platform NTO (Tuned CR only) | ocp |
-| `openshift-cert-manager-operator` | `stable-v1` | hub, ocp |
-| `openshift-data-foundation-operator` | `stable-4.22` | hub, ocp |
-| `openshift-external-secrets-operator` | `stable-v1` | hub, ocp |
-| `openshift-logging-operator` | `stable-6.6` | hub, ocp |
-| `openshift-pipelines-operator` | `latest` | ocp |
-| `openshift-service-mesh` | `stable` | ocp |
-| `quay-operator` | `stable-3.16` | ocp |
-| `virtualization-operator` | `stable` | ocp |
-
-Platform config packages (no OLM channel): `openshift-apiserver-operator`, `openshift-console-operator`, `openshift-ingress-operator`, `openshift-machine-config-operator`, `openshift-network-operator`, `cluster-image-registry-operator`.
-
-Logging and Loki stay on the **same minor** (`stable-6.6`).
-
-## Ops checks
-
-```bash
-oc get csv -A | grep -v Succeeded || true
-oc get clustersecretstore
-oc get externalsecret -A
-oc get network.config.openshift.io cluster \
-  -o jsonpath='{.status.clusterNetworkMTU}{"\n"}'
-```
-
-```bash
-# ODF storage nodes
-oc label node <node> cluster.ocs.openshift.io/openshift-storage=''
-
-# Secondary physnet (eno2 jumbo)
-oc label node <node> sigaint.au/physnet=eno2
-```
-
-## Add a package
-
-```bash
-# 1. scaffold base + overlays/<cluster>
-# 2. build
-kubectl kustomize infrastructure/<name>/overlays/ocp
-kubectl kustomize --enable-helm applications/<name>/overlays/ocp
-
-# 3. register in clusters/<cluster>/* ApplicationSet (wave)
-# 4. validate
-./scripts/validate-kustomize.sh
-```
-
-## Security
-
-| Topic | Practice |
-|-------|----------|
-| Secrets | External Secrets + Doppler — never commit tokens |
-| Argo CD | AppProjects; no long-lived cluster-admin |
-| Images | Pin chart / image versions |
-| Network | Prefer default-deny NetworkPolicies |
-
-## Optional (not in ApplicationSets)
-
-- `infrastructure/cluster-observability-operator`
-- `infrastructure/crunchy-postgres-operator`
-
-## License
-
-Internal Sigaint platform configuration.
