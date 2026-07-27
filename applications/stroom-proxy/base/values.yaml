@@ -90,19 +90,10 @@ volumeClaims:
       requests:
         storage: 50Gi
 
-# OpenShift restricted-v2: chart defaults pin UID/GID 1000 (rejected). Those
-# keys are removed via overlay patch; keep nonroot + seccomp here.
-# Platform assigns UID/fsGroup from the namespace range.
-podSecurityContext:
-  runAsNonRoot: true
-  seccompProfile:
-    type: RuntimeDefault
-
-securityContext:
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
+# Chart defaults pin UID 1000; overlay strips pod/container securityContext so
+# OpenShift SCC admission can inject the correct context.
+podSecurityContext: {}
+securityContext: {}
 
 serviceAccount:
   create: true
