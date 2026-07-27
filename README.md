@@ -24,7 +24,7 @@ Repo: `https://github.com/sigaint-au/sigaint-iac`
 clusters/<cluster>/          # ApplicationSets + bootstrap (per-cluster Argo CD)
   bootstrap/                 # AppProjects + root Application (apply only on that cluster)
 infrastructure/              # Operators & platform config
-applications/                # Workloads (Quay, OpenShift Logging)
+applications/                # Workloads (Quay, OpenShift Logging, Stroom Proxy)
 virtualization/              # KubeVirt / Multus / credentials
 components/                  # Shared Kustomize components
 scripts/validate-kustomize.sh

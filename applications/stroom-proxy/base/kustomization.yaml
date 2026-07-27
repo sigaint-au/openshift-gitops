@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Vendored GCHQ Stroom Proxy chart (gchq/stroom-proxy image) from
+# gradata-systems/stroom-helm-charts 1.2.14 (app v7.10.20).
+# Source: https://github.com/gradata-systems/stroom-helm-charts
+# Path is base/helm (not charts/) so repo .gitignore does not exclude it.
+helmGlobals:
+  chartHome: ./helm
+
+helmCharts:
+  - name: stroom-proxy
+    releaseName: stroom-proxy
+    namespace: lhm-prod-stroom-proxy
+    valuesFile: values.yaml
+    includeCRDs: false

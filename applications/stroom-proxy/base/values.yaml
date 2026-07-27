@@ -1,0 +1,93 @@
+# Base values for GCHQ Stroom Proxy (chart 1.2.14 / app v7.10.20).
+# Overlay may further customise; secrets are supplied via External Secrets.
+
+replicaCount: 1
+
+image:
+  repository: gchq/stroom-proxy
+  pullPolicy: IfNotPresent
+  tag: v7.10.20
+
+# Privileged log-sender sidecar is disabled for OpenShift restricted SCC.
+logSender:
+  enabled: false
+
+# Destination Stroom instance for feed-status and default forward URL.
+# Update when a central Stroom is available in-cluster or externally.
+stroom:
+  baseUri: https://stroom.example.com
+  paths:
+    datafeed: /stroom/noauth/datafeed
+    feedStatus: /api/feedStatus/v2
+  feedStatus:
+    enabled: false
+    apiKeySecretRef:
+      name: stroom-proxy-api-key
+      key: api-key
+
+receive:
+  authentication:
+    # Enable when clients present client certificates via the Route / edge.
+    enabled: false
+
+aggregation:
+  enabled: true
+  frequency: PT10M
+  maxItemsPerAggregate: 10000
+  maxUncompressedByteSize: 1.0G
+  splitSources: true
+
+# Disable forwarding until a real Stroom baseUri is configured.
+forwarding:
+  enabled: false
+  threadCount: 4
+
+# OpenShift Route is used instead of the chart Ingress (nginx annotations).
+ingress:
+  enabled: false
+
+tls:
+  # Populated by ExternalSecret / cert-manager (must include ca.crt).
+  secretName: stroom-proxy-tls
+  keystorePasswordSecretRef:
+    name: stroom-proxy-keystore-password
+    key: password
+
+ports:
+  app: 8443
+  admin: 8090
+
+service:
+  type: ClusterIP
+
+javaOpts: -Xms512m -Xmx1g
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+# Keep false on OpenShift: the chart's chown init runs as root (blocked by
+# restricted SCC). Rely on fsGroup: 1000 for RBD volume permissions.
+takeOwnershipOnStartup: false
+
+volumeClaims:
+  data:
+    storageClassName: ocs-storagecluster-ceph-rbd
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 50Gi
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
+
+serviceAccount:
+  create: true

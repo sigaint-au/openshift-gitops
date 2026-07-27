@@ -1,0 +1,200 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "stroom-proxy.fullname" . }}
+  labels:
+    {{- include "stroom-proxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "stroom-proxy.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "stroom-proxy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "stroom-proxy.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "stroom-proxy.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: generate-keystore
+          image: {{ include "stroom-proxy.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              keystore_path='/data/keystore.p12'
+              echo "Creating keystore: $keystore_path"
+              openssl pkcs12 -in /opt/tls/tls.crt -inkey /opt/tls/tls.key -export -out "$keystore_path" -passout "pass:${KEYSTORE_PASSWORD}"
+
+              truststore_path='/data/truststore.p12'
+              echo "Creating truststore: $truststore_path"
+              openssl pkcs12 -in /opt/tls/ca.crt -nokeys -export -out "$truststore_path" -passout "pass:${KEYSTORE_PASSWORD}" -jdktrust anyExtendedKeyUsage
+          env:
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .Values.tls.keystorePasswordSecretRef | nindent 18 }}
+          volumeMounts:
+            - mountPath: /data
+              name: keystore
+            - mountPath: /opt/tls
+              name: certs
+              readOnly: true
+        {{- if .Values.takeOwnershipOnStartup }}
+        - name: take-ownership
+          image: {{ .Values.busybox.repository }}:{{ .Values.busybox.tag }}
+          command:
+            - sh
+            - -c
+            - |
+              chown 1000:1000 /stroom-proxy/*
+          volumeMounts:
+            {{- include "stroom-proxy.localDataVolumeMounts" . | nindent 12 }}
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "stroom-proxy.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: JAVA_OPTS
+              value: {{ .Values.javaOpts | quote }}
+            - name: KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .Values.tls.keystorePasswordSecretRef | nindent 18 }}
+            {{- if .Values.stroom.feedStatus.enabled }}
+            - name: FEED_STATUS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  {{- toYaml .Values.stroom.feedStatus.apiKeySecretRef | nindent 18 }}
+            {{- end }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - mountPath: /stroom-proxy/config/config.yml
+              name: config
+              subPath: config.yml
+              readOnly: true
+            - mountPath: /stroom-proxy/pki
+              name: keystore
+              readOnly: true
+            {{- include "stroom-proxy.localDataVolumeMounts" . | nindent 12 }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            - name: app
+              containerPort: {{ .Values.ports.app }}
+              protocol: TCP
+            - name: admin
+              containerPort: {{ .Values.ports.admin }}
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /proxyAdmin/filteredhealthcheck?deny=stroom.proxy.app.handler.RemoteFeedStatusService
+              port: admin
+            {{- toYaml .Values.probeTimings.startup | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /proxyAdmin/filteredhealthcheck?deny=stroom.proxy.app.handler.RemoteFeedStatusService
+              port: admin
+            {{- toYaml .Values.probeTimings.readiness | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /proxyAdmin/filteredhealthcheck?deny=stroom.proxy.app.handler.RemoteFeedStatusService
+              port: admin
+            {{- toYaml .Values.probeTimings.liveness | nindent 12 }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+        {{- if .Values.logSender.enabled }}
+        - name: log-sender
+          image: "{{ .Values.logSender.image.repository }}:{{ .Values.logSender.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LOG_SENDER_SCRIPT
+              value: /stroom-log-sender/send_to_stroom.sh
+            - name: LOG_SENDER_HEADERS
+              value: /stroom-log-sender/config/headers.txt
+            - name: DESTINATION_URL
+              value: {{ .Values.logSender.destinationUrl | quote }}
+            - name: BASE_LOGS_DIR
+              value: /stroom-log-sender/source-logs
+            - name: FILE_REGEX
+              value: {{ .Values.logSender.fileRegex | quote }}
+          volumeMounts:
+            - mountPath: /stroom-log-sender/source-logs
+              name: data
+              subPath: logs
+            - mountPath: /stroom-log-sender/config/crontab.txt
+              name: config
+              subPath: log-sender-crontab.txt
+              readOnly: true
+            - mountPath: /stroom-log-sender/config/headers.txt
+              name: config
+              subPath: log-sender-headers.txt
+              readOnly: true
+            - mountPath: /opt/tls
+              name: certs
+              readOnly: true
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            privileged: true
+          resources:
+            {{- toYaml .Values.logSender.resources | nindent 12 }}
+        {{- end }}
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ .Values.tls.secretName }}
+        - name: keystore
+          emptyDir: { }
+        - name: config
+          configMap:
+            name: {{ include "stroom-proxy.fullname" . }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- with .Values.volumeClaims }}
+  volumeClaimTemplates:
+    {{- range $name, $volumeClaim := . }}
+    - metadata:
+        name: {{ $name }}
+        labels:
+          {{- include "stroom-proxy.labels" $ | nindent 10 }}
+      spec:
+        {{- toYaml $volumeClaim | nindent 8 }}
+    {{- end }}
+  {{- end }}

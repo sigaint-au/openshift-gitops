@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "stroom-proxy.fullname" . }}
+  labels:
+    {{- include "stroom-proxy.labels" . | nindent 4 }}
+data:
+  config.yml: |
+    server:
+      applicationContextPath: /
+      adminContextPath: /proxyAdmin
+      {{- with .Values.serverProperties }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      applicationConnectors:
+        - type: https
+          port: {{ .Values.ports.app }}
+          useForwardedHeaders: true
+          keyStoreType: PKCS12
+          keyStorePath: /stroom-proxy/pki/keystore.p12
+          keyStorePassword: ${KEYSTORE_PASSWORD}
+          trustStoreType: PKCS12
+          trustStorePath: /stroom-proxy/pki/truststore.p12
+          trustStorePassword: ${KEYSTORE_PASSWORD}
+          validateCerts: false
+          {{- if .Values.receive.authentication.enabled }}
+          wantClientAuth: true
+          {{- end }}
+          disableSniHostCheck: {{ .Values.receive.authentication.certificate.verifyHostName | not }}
+      adminConnectors:
+        - type: http
+          port: {{ .Values.ports.admin }}
+          useForwardedHeaders: true
+      requestLog:
+        {{- with .Values.logging }}
+        appenders:
+          - type: file
+            currentLogFilename: {{ printf "%s/access/access.log" .baseDir }}
+            threshold: ALL
+            queueSize: 256
+            discardingThreshold: 0
+            archive: {{ .archive.enabled }}
+            archivedLogFilenamePattern: {{ printf "%s/access/access-%%d{%s}.log.gz" .baseDir .fileDateFormat }}
+            archivedFileCount: {{ .archive.maxFileCount }}
+            timeZone: {{ .timeZone }}
+            logFormat: '%h %l "%u" [%t] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D'
+        {{- end }}
+
+    logging:
+      {{- with .Values.logging }}
+      level: {{ .level }}
+      loggers:
+        stroom: INFO
+        io.dropwizard: INFO
+        org.eclipse.jetty: INFO
+        org.flywaydb: INFO
+        "receive":
+          level: INFO
+          additive: false
+          appenders:
+            - type: file
+              currentLogFilename: {{ printf "%s/receive/receive.log" .baseDir }}
+              threshold: ALL
+              queueSize: 256
+              discardingThreshold: 0
+              archive: {{ .archive.enabled }}
+              archivedLogFilenamePattern: {{ printf "%s/receive/receive-%%d{%s}.log.gz" .baseDir .fileDateFormat }}
+              archivedFileCount: {{ .archive.maxFileCount }}
+              timeZone: {{ .timeZone }}
+              logFormat: "%-6level [%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}] [%t] %logger - %X{code} %msg %n"
+        "send":
+          level: INFO
+          additive: false
+          appenders:
+            - type: file
+              currentLogFilename: {{ printf "%s/send/send.log" .baseDir }}
+              threshold: ALL
+              queueSize: 256
+              discardingThreshold: 0
+              archive: {{ .archive.enabled }}
+              archivedLogFilenamePattern: {{ printf "%s/send/send-%%d{%s}.log.gz" .baseDir .fileDateFormat }}
+              archivedFileCount: {{ .archive.maxFileCount }}
+              timeZone: {{ .timeZone }}
+              logFormat: "%-6level [%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}] [%t] %logger - %X{code} %msg %n"
+      {{- end }}
+
+      appenders:
+        {{- with .Values.logging }}
+        - type: console
+          logFormat: "%highlight(%-6level) [%d{\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",UTC}] [%green(%t)] %cyan(%logger) - %X{code} %msg %n"
+          timeZone: {{ .timeZone }}
+        - type: file
+          currentLogFilename: {{ printf "%s/app/app.log" .baseDir }}
+          threshold: ALL
+          queueSize: 256
+          discardingThreshold: 0
+          archive: {{ .archive.enabled }}
+          archivedLogFilenamePattern: {{ printf "%s/app/app-%%d{%s}.log.gz" .baseDir .fileDateFormat }}
+          archivedFileCount: {{ .archive.maxFileCount }}
+          timeZone: {{ .timeZone }}
+          logFormat: "%-6level [%d{\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",UTC}] [%t] %logger - %X{code} %msg %n"
+        {{- end }}
+
+    jerseyClients:
+      default:
+        {{- with .Values.stroom.feedStatus.httpClient }}
+        connectionTimeout: {{ .connectionTimeout }}
+        connectionRequestTimeout: {{ .connectionTimeout }}
+        keepAlive: {{ .keepAlive }}
+        retries: {{ .retries }}
+        timeToLive: {{ .timeToLive }}
+        timeout: {{ .timeout }}
+        tls:
+          keyStoreType: PKCS12
+          keyStorePath: /stroom-proxy/pki/keystore.p12
+          keyStorePassword: ${KEYSTORE_PASSWORD}
+          trustStoreType: PKCS12
+          trustStorePath: /stroom-proxy/pki/truststore.p12
+          trustStorePassword: ${KEYSTORE_PASSWORD}
+          verifyHostname: {{ .tls.verifyHostName }}
+        {{- end }}
+
+    proxyConfig:
+      {{- with .Values.stroom.feedStatus }}
+      feedStatus:
+        enabled: {{ .enabled }}
+        url: {{ include "stroom-proxy.feedStatusUrl" $ | quote }}
+        apiKey: "${FEED_STATUS_API_KEY}"
+      {{- end }}
+
+      {{- with .Values.aggregation }}
+      aggregator:
+        enabled: {{ .enabled }}
+        aggregationFrequency: {{ .frequency | quote }}
+        maxItemsPerAggregate: {{ .maxItemsPerAggregate }}
+        maxUncompressedByteSize: {{ .maxUncompressedByteSize | quote }}
+        splitSources: {{ .splitSources }}
+      {{- end }}
+
+      forwardHttpDestinations:
+        {{- with .Values.forwarding }}
+        - enabled: {{ .enabled }}
+          name: default
+          forwardUrl: {{ include "stroom-proxy.forwardUrl" $ }}
+          {{- if .includeHeaders }}
+          forwardHeadersAdditionalAllowSet:
+            {{- toYaml .includeHeaders | nindent 12 }}
+          {{- end }}
+          httpClient:
+            {{- with .httpClient }}
+            connectionTimeout: {{ .connectionTimeout | quote }}
+            connectionRequestTimeout: {{ .connectionTimeout | quote }}
+            keepAlive: {{ .keepAlive | quote }}
+            retries: {{ .retries }}
+            timeToLive: {{ .timeToLive | quote }}
+            timeout: {{ .timeout | quote }}
+            validateAfterInactivityPeriod: {{ .validateAfterInactivityPeriod | quote }}
+            tls:
+              keyStoreType: PKCS12
+              keyStorePath: /stroom-proxy/pki/keystore.p12
+              keyStorePassword: ${KEYSTORE_PASSWORD}
+              trustStoreType: PKCS12
+              trustStorePath: /stroom-proxy/pki/truststore.p12
+              trustStorePassword: ${KEYSTORE_PASSWORD}
+              verifyHostname: {{ .tls.hostVerificationEnabled }}
+            {{- end }}
+          queue:
+            errorSubPathTemplate:
+              enabled: true
+              pathTemplate: {{ .directoryFormat | quote }}
+              templatingMode: "REPLACE_UNKNOWN_PARAMS"
+            forwardDelay: {{ .delay | quote }}
+            forwardThreadCount: {{ .threadCount }}
+            maxRetryAge: {{ .maxRetryAge | quote }}
+            maxRetryDelay: {{ .maxRetryDelay | quote }}
+            queueAndRetryEnabled: {{ .queueAndRetryEnabled }}
+            retryDelay: {{ .retryDelay | quote }}
+            retryDelayGrowthFactor: {{ .retryDelayGrowthFactor }}
+        {{- end }}
+
+      logStream:
+        metaKeys:
+          {{- toYaml .Values.logging.includeMetaKeys | nindent 10 }}
+
+      path:
+        data: /stroom-proxy/data
+        home: /stroom-proxy
+        temp: /tmp/stroom-proxy
+
+      receive:
+        {{- with .Values.receive.authentication }}
+        authenticationRequired: {{ .enabled }}
+        x509CertificateDnFormat: {{ .certificate.distinguishedNameFormat | quote }}
+        x509CertificateDnHeader: {{ .certificate.distinguishedNameHeader }}
+        x509CertificateHeader: {{ .certificate.header }}
+        {{- end }}
+
+    {{- if .Values.logSender.enabled }}
+  log-sender-headers.txt: |
+    {{- range $key, $value := .Values.logSender.extraHeaders }}
+    {{ printf "%s:%s" $key $value }}
+    {{- end }}
+
+  log-sender-crontab.txt: |-
+    {{- range $subDir, $feedName := .Values.logSender.sources }}
+    {{ $.Values.logSender.cronSchedule }} ${LOG_SENDER_SCRIPT} "${BASE_LOGS_DIR}/{{ $subDir }}" {{ $feedName | quote }} "${DESTINATION_URL}" \
+    --file-regex "${FILE_REGEX}" \
+    --system {{ $.Values.logSender.attributes.system | quote }} \
+    --environment {{ $.Values.logSender.attributes.environment | quote }} \
+    -H "OriginalHost:${HOSTNAME}" \
+    --headers "${LOG_SENDER_HEADERS}" \
+    --delete-after-sending \
+    --cert /opt/tls/tls.crt --key /opt/tls/tls.key --cacert /opt/tls/ca.crt > /dev/stdout
+    {{- end }}
+  {{- end }}

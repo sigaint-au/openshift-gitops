@@ -13,6 +13,8 @@ spec:
             wave: "20"
           - name: openshift-logging
             wave: "20"
+          - name: stroom-proxy
+            wave: "20"
   template:
     metadata:
       name: 'app-{{.name}}'

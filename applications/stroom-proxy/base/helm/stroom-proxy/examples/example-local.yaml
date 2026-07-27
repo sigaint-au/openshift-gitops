@@ -1,0 +1,66 @@
+# Example values file for two-replica Stroom proxy instance with persistent storage
+
+replicaCount: 2
+
+stroom:
+  baseUri: http://stroom-node-data-http.stroom.svc:8080
+  feedStatus:
+    apiKeySecretRef:
+      name: stroom-proxy-api-key
+      key: stroom_api_key
+
+forwarding:
+  enabled: true
+  threadCount: 4
+
+repository:
+  reader:
+    cronSchedule: "* * *"
+  aggregation:
+    maxStreamSize: 1G
+    maxFilesPerAggregate: 10000
+
+keyStore:
+  type: PKCS12
+  secretRef:
+    name: stroom-proxy-tls
+    key: keystore.p12
+  passwordSecretRef:
+    name: stroom-keystore-password
+    key: password
+
+trustStore:
+  type: PKCS12
+  secretRef:
+    name: stroom-proxy-tls
+    key: truststore.p12
+  passwordSecretRef:
+    name: stroom-keystore-password
+    key: password
+
+ingress:
+  enabled: true
+  hostName: proxy.stroom.example.com
+  tls:
+    secretName: stroom-proxy-tls
+
+javaOpts: -Xms512m -Xmx1g
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+volumeClaims:
+  data:
+    storageClassName: local-storage
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+      limits:
+        storage: 1Gi
