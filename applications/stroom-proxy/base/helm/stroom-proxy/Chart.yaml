@@ -1,6 +1,0 @@
-apiVersion: v2
-appVersion: v7.10.20
-description: A Helm chart for Kubernetes
-name: stroom-proxy
-type: application
-version: 1.2.14
