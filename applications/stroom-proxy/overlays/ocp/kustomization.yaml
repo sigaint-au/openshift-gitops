@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# No operator-instance-sync-wave: that component forces Issuer after Certificate;
-# this app bootstraps a private CA (Issuer → CA cert → CA Issuer → leaf).
+# No operator-instance-sync-wave: that component reorders Issuer/Certificate badly.
 namespace: lhm-prod-stroom-proxy
 resources:
   - ../../base
@@ -11,6 +10,9 @@ resources:
 
 # kustomize does not apply `namespace:` to resources produced by helmCharts
 # (inflation runs after the namespace transformer). Patch helm output explicitly.
+#
+# Sync waves: Namespace -10 → certs/secrets 5–6 → workload 20 so
+# Secret stroom-proxy-tls exists before the StatefulSet mounts it.
 patches:
   - target:
       kind: ServiceAccount
@@ -19,6 +21,9 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "20"
   - target:
       kind: ConfigMap
       name: stroom-proxy
@@ -26,6 +31,9 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "20"
   - target:
       kind: Service
       name: stroom-proxy
@@ -33,6 +41,9 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "20"
   - target:
       kind: StatefulSet
       name: stroom-proxy
@@ -40,6 +51,9 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "20"
       # Let OpenShift SCC inject securityContext (chart pins UID 1000)
       - op: remove
         path: /spec/template/spec/securityContext
@@ -52,3 +66,6 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "20"
