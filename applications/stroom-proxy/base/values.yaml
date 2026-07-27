@@ -1,5 +1,4 @@
 # Base values for GCHQ Stroom Proxy (chart 1.2.14 / app v7.10.20).
-# Overlay may further customise; secrets are supplied via External Secrets.
 
 replicaCount: 1
 
@@ -27,7 +26,7 @@ stroom:
 
 receive:
   authentication:
-    # Enable when clients present client certificates via the Route / edge.
+    # Enable when clients present client certificates via the Ingress / edge.
     enabled: false
 
 aggregation:
@@ -42,12 +41,21 @@ forwarding:
   enabled: false
   threadCount: 4
 
-# OpenShift Route is used instead of the chart Ingress (nginx annotations).
 ingress:
-  enabled: false
+  enabled: true
+  className: openshift-default
+  hostName: stroom-proxy.apps.ocp.sigaint.au
+  annotations: {}
+  maxClientBodySize: 10g
+  tls:
+    secretName: stroom-proxy-tls
+
+# Example only — not for production. Chart requires a Secret ref; the same
+# value is materialised as Secret stroom-proxy-keystore-password (see overlay).
+keystorePassword: "changeme"
 
 tls:
-  # Populated by ExternalSecret / cert-manager (must include ca.crt).
+  # cert-manager Certificate (overlays/ocp/certificate.yaml) → includes ca.crt.
   secretName: stroom-proxy-tls
   keystorePasswordSecretRef:
     name: stroom-proxy-keystore-password

@@ -1,0 +1,70 @@
+# cert-manager CA + leaf so Secret stroom-proxy-tls includes tls.crt, tls.key, and ca.crt
+# (chart init builds PKCS12 truststore from ca.crt; ACME secrets omit that key).
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: stroom-proxy-selfsigned
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stroom-proxy-ca
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  isCA: true
+  commonName: stroom-proxy-ca
+  secretName: stroom-proxy-ca
+  duration: 87600h # 10y
+  renewBefore: 720h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: stroom-proxy-selfsigned
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: stroom-proxy-ca-issuer
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  ca:
+    secretName: stroom-proxy-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stroom-proxy-tls
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: stroom-proxy-tls
+  duration: 2160h # 90d
+  renewBefore: 360h
+  commonName: stroom-proxy.apps.ocp.sigaint.au
+  dnsNames:
+    - stroom-proxy.apps.ocp.sigaint.au
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: stroom-proxy-ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth

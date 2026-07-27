@@ -1,11 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-components:
-  - ../../../../components/operator-instance-sync-wave
+# No operator-instance-sync-wave: that component forces Issuer after Certificate;
+# this app bootstraps a private CA (Issuer → CA cert → CA Issuer → leaf).
 namespace: lhm-prod-stroom-proxy
 resources:
   - ../../base
   - namespace.yaml
-  - external-secret-tls.yaml
-  - external-secret-keystore-password.yaml
-  - route.yaml
+  - certificate.yaml
+  - keystore-password-secret.yaml
