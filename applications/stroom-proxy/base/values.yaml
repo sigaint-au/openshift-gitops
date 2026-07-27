@@ -78,8 +78,7 @@ resources:
     cpu: "2"
     memory: 2Gi
 
-# Keep false on OpenShift: the chart's chown init runs as root (blocked by
-# restricted SCC). Rely on fsGroup: 1000 for RBD volume permissions.
+# Keep false on OpenShift: the chart's chown init runs as root (blocked by SCC).
 takeOwnershipOnStartup: false
 
 volumeClaims:
@@ -91,11 +90,19 @@ volumeClaims:
       requests:
         storage: 50Gi
 
+# OpenShift restricted-v2: chart defaults pin UID/GID 1000 (rejected). Those
+# keys are removed via overlay patch; keep nonroot + seccomp here.
+# Platform assigns UID/fsGroup from the namespace range.
 podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
   runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
 
 serviceAccount:
   create: true

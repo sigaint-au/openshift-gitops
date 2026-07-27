@@ -40,6 +40,17 @@ patches:
       - op: add
         path: /metadata/namespace
         value: lhm-prod-stroom-proxy
+      # restricted-v3
+      - op: add
+        path: /spec/template/spec/hostUsers
+        value: false
+      # Drop chart UID/GID 1000 — OpenShift restricted-v2 assigns from ns range
+      - op: remove
+        path: /spec/template/spec/securityContext/runAsUser
+      - op: remove
+        path: /spec/template/spec/securityContext/runAsGroup
+      - op: remove
+        path: /spec/template/spec/securityContext/fsGroup
   - target:
       kind: Ingress
       name: stroom-proxy
