@@ -4,10 +4,10 @@ CloudNativePG operator (Quay database).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-cloudnative-pg-operator` |
 
 ```bash
-kubectl kustomize infrastructure/cloudnative-pg-operator/overlays/ocp
+kubectl kustomize infrastructure/cloudnative-pg-operator/overlays/lhm-dev
 oc get csv -n openshift-operators | grep cloudnative
 ```

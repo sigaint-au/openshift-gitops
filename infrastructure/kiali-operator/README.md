@@ -4,12 +4,12 @@ Kiali Operator (`kiali-ossm`) + Kiali CR + OpenShift console plugin (`OSSMConsol
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-kiali-operator` |
 | Depends on | `openshift-service-mesh` (ApplicationSet wave `0` → kiali `5`) |
 
 ```bash
-kubectl kustomize infrastructure/kiali-operator/overlays/ocp
+kubectl kustomize infrastructure/kiali-operator/overlays/lhm-dev
 oc get csv -n openshift-operators | grep kiali
 oc get kiali -A
 oc get ossmconsole -n openshift-operators

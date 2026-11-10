@@ -1,0 +1,21 @@
+apiVersion: local.storage.openshift.io/v1alpha1
+kind: LocalVolumeSet
+metadata:
+  name: local-block
+  namespace: openshift-local-storage
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  nodeSelector:
+    nodeSelectorTerms:
+      - matchExpressions:
+          - key: node-role.kubernetes.io/worker
+            operator: Exists
+  storageClassName: local-block
+  volumeMode: Block
+  deviceInclusionSpec:
+    # Root disk is 558 GB (~520 GiB); the six ODF disks are 931 GB (~867 GiB).
+    # Re-check with LocalVolumeDiscovery output before trusting this on new hardware.
+    minSize: 600Gi
+    deviceTypes:
+      - disk

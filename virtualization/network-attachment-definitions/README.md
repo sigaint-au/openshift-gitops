@@ -22,6 +22,6 @@ networks:
 ```
 
 ```bash
-kubectl kustomize virtualization/network-attachment-definitions/overlays/ocp
+kubectl kustomize virtualization/network-attachment-definitions/overlays/lhm-dev
 oc get net-attach-def -n default
 ```

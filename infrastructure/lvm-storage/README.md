@@ -1,13 +1,13 @@
 # lvm-storage
 
-LVM Storage (Topolvm) for hub local volumes.
+LVM Storage (Topolvm) for lhm-prod local volumes.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `hub` |
-| App | `hub-lvm-storage` |
+| Cluster | `lhm-prod` |
+| App | `lhm-prod-lvm-storage` |
 
 ```bash
-kubectl kustomize infrastructure/lvm-storage/overlays/hub
+kubectl kustomize infrastructure/lvm-storage/overlays/lhm-prod
 oc get lvmcluster -A
 ```

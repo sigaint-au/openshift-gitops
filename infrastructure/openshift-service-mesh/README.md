@@ -4,12 +4,12 @@ OpenShift Service Mesh 3 (Sail Operator) — **Istio ambient** control plane.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-openshift-service-mesh` |
 | Operator | `servicemeshoperator3` · channel `stable` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-service-mesh/overlays/ocp
+kubectl kustomize infrastructure/openshift-service-mesh/overlays/lhm-dev
 oc get csv -A | grep -i mesh
 oc get istio,istiocni,ztunnel -A
 ```

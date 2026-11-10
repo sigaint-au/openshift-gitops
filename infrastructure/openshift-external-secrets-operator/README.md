@@ -4,7 +4,7 @@ External Secrets Operator + Doppler `ClusterSecretStore`.
 
 | Field | Value |
 |-------|-------|
-| Clusters | `hub`, `ocp` |
+| Clusters | `lhm-prod`, `lhm-dev` |
 
 ## Bootstrap secret (once per cluster)
 
@@ -18,7 +18,7 @@ overlays/*/doppler-secret.yaml.example
 ```
 
 ```bash
-kubectl kustomize infrastructure/openshift-external-secrets-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-external-secrets-operator/overlays/lhm-dev
 oc get clustersecretstore
 oc get externalsecret -A
 ```

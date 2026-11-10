@@ -4,7 +4,7 @@ NMState operator + secondary physnet NNCPs (OVN localnet bridges).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-nmstate` |
 | Active policy | `physnet1-external-eno2` |
 
@@ -30,5 +30,5 @@ server-lhm-prod dmz-lhm-prod vmnet-lhm-prod
 Must match NAD CNI names under `virtualization/network-attachment-definitions/`.
 
 ```bash
-kubectl kustomize infrastructure/nmstate/overlays/ocp
+kubectl kustomize infrastructure/nmstate/overlays/lhm-dev
 ```

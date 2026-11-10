@@ -4,7 +4,7 @@ MetalLB (BGP) LoadBalancer VIPs for LHM production VLANs.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-metallb-operator` |
 | Peer | `10.120.14.1` (SERVER), ASN 65000 |
 
@@ -27,6 +27,6 @@ metallb.io/ip-allocated-from-pool: dmz-lhm-prod
 ```
 
 ```bash
-kubectl kustomize infrastructure/metallb-operator/overlays/ocp
+kubectl kustomize infrastructure/metallb-operator/overlays/lhm-dev
 oc get ipaddresspool,bgppeer,bgpadvertisement -n metallb-system
 ```

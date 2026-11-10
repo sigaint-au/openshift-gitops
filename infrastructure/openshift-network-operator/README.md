@@ -4,7 +4,7 @@ Cluster Network Operator (`Network` CR) — OVN gateway + cluster MTU.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-openshift-network-operator` |
 
 | Setting | Value |
@@ -14,7 +14,7 @@ Cluster Network Operator (`Network` CR) — OVN gateway + cluster MTU.
 | `ipForwarding` | `Global` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-network-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-network-operator/overlays/lhm-dev
 oc get network.operator cluster \
   -o jsonpath='{.spec.defaultNetwork.ovnKubernetesConfig.mtu}{"\n"}'
 ```

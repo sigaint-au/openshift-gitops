@@ -5,15 +5,15 @@ policy used by kubelet / CRI-O pulls.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-cluster-image-registry-operator` |
 
 ```bash
-kubectl kustomize infrastructure/cluster-image-registry-operator/overlays/ocp
+kubectl kustomize infrastructure/cluster-image-registry-operator/overlays/lhm-dev
 oc get image.config.openshift.io cluster -o yaml
 ```
 
-## Allowed registries (ocp)
+## Allowed registries (lhm-dev)
 
 | Registry | Why |
 |----------|-----|
@@ -26,7 +26,7 @@ oc get image.config.openshift.io cluster -o yaml
 | `nvcr.io` | NVIDIA NGC driver/runtime images |
 | `ghcr.io` / `docker.io` / `registry.k8s.io` | Common third-party |
 
-Edit: `overlays/ocp/patch-allowed-registries.yaml`
+Edit: `overlays/lhm-dev/patch-allowed-registries.yaml`
 
 ## SignatureValidationFailed
 

@@ -4,9 +4,9 @@ Container Security Operator (image vulnerability views).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-container-security-operator` |
 
 ```bash
-kubectl kustomize infrastructure/container-security-operator/overlays/ocp
+kubectl kustomize infrastructure/container-security-operator/overlays/lhm-dev
 ```

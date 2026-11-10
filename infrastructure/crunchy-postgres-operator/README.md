@@ -3,5 +3,5 @@
 Crunchy Postgres Operator (optional — Quay uses CloudNativePG).
 
 ```bash
-kubectl kustomize infrastructure/crunchy-postgres-operator/overlays/ocp
+kubectl kustomize infrastructure/crunchy-postgres-operator/overlays/lhm-dev
 ```

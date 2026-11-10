@@ -4,10 +4,10 @@ OpenShift Pipelines (Tekton).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-openshift-pipelines-operator` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-pipelines-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-pipelines-operator/overlays/lhm-dev
 oc get tektonconfig
 ```

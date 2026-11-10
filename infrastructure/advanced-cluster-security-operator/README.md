@@ -4,12 +4,12 @@ Red Hat Advanced Cluster Security (Central + SecuredCluster).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-advanced-cluster-security-operator` |
 | Depends on | `compliance-operator` (recommended) |
 
 ```bash
-kubectl kustomize infrastructure/advanced-cluster-security-operator/overlays/ocp
+kubectl kustomize infrastructure/advanced-cluster-security-operator/overlays/lhm-dev
 oc get central,securedcluster -A
 ```
 

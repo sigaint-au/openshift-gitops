@@ -4,9 +4,9 @@ IngressController / default ingress TLS configuration.
 
 | Field | Value |
 |-------|-------|
-| Clusters | `hub`, `ocp` |
+| Clusters | `lhm-prod`, `lhm-dev` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-ingress-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-ingress-operator/overlays/lhm-dev
 oc get ingresscontroller -n openshift-ingress-operator
 ```

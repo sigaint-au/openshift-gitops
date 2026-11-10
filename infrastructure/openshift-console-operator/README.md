@@ -4,8 +4,8 @@ Console customization (branding / config).
 
 | Field | Value |
 |-------|-------|
-| Clusters | `hub`, `ocp` |
+| Clusters | `lhm-prod`, `lhm-dev` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-console-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-console-operator/overlays/lhm-dev
 ```

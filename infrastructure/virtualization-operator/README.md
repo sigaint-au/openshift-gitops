@@ -4,12 +4,12 @@ OpenShift Virtualization (CNV) + **HyperConverged** (OCP 4.22-oriented).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-virtualization-operator` |
 | Namespace | `openshift-cnv` |
 
 ```bash
-kubectl kustomize infrastructure/virtualization-operator/overlays/ocp
+kubectl kustomize infrastructure/virtualization-operator/overlays/lhm-dev
 oc get hyperconverged kubevirt-hyperconverged -n openshift-cnv
 oc get csv -n openshift-cnv
 ```

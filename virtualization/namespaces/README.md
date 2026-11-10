@@ -4,7 +4,7 @@ Shared namespaces for virtualization and platform workloads.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `virt-namespaces` |
 
 | Namespace | Purpose |
@@ -15,6 +15,6 @@ Shared namespaces for virtualization and platform workloads.
 | `lhm-prod-quay` | Quay registry |
 
 ```bash
-kubectl kustomize virtualization/namespaces/overlays/ocp
+kubectl kustomize virtualization/namespaces/overlays/lhm-dev
 oc get ns lhm-prod-vmnet lhm-prod-dmz lhm-prod-monitoring lhm-prod-quay
 ```

@@ -5,13 +5,13 @@ features for scheduling (OpenShift Virtualization, GPU, device plugins).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-node-feature-discovery-operator` |
 | Channel | `stable` |
 | Namespace | `openshift-nfd` |
 
 ```bash
-kubectl kustomize infrastructure/node-feature-discovery-operator/overlays/ocp
+kubectl kustomize infrastructure/node-feature-discovery-operator/overlays/lhm-dev
 oc get csv -n openshift-nfd
 oc get nodefeaturediscovery -n openshift-nfd
 oc get nodes -o json | jq -r '.items[].metadata.labels | keys[]' | grep feature.node | sort -u | head

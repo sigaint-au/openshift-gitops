@@ -4,13 +4,13 @@ Cluster logging stack: LokiStack, log forwarder, console UI plugin.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `app-openshift-logging` |
 | Namespace | `openshift-logging` |
 | Depends on | `openshift-logging-operator`, `loki-operator`, ODF/NooBaa S3 |
 
 ```bash
-kubectl kustomize applications/openshift-logging/overlays/ocp
+kubectl kustomize applications/openshift-logging/overlays/lhm-dev
 oc get lokistack,clusterlogforwarder -n openshift-logging
 ```
 

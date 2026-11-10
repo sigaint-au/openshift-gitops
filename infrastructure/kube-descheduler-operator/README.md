@@ -5,14 +5,14 @@ workloads (relieve-and-migrate).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-kube-descheduler-operator` |
 | Channel | `stable` |
 | Namespace | `openshift-kube-descheduler-operator` |
 | Depends on | `virtualization-operator` (ApplicationSet wave) |
 
 ```bash
-kubectl kustomize infrastructure/kube-descheduler-operator/overlays/ocp
+kubectl kustomize infrastructure/kube-descheduler-operator/overlays/lhm-dev
 oc get csv -n openshift-kube-descheduler-operator
 oc get kubedescheduler cluster -n openshift-kube-descheduler-operator -o yaml
 ```

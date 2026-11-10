@@ -1,0 +1,26 @@
+---
+# Root Application for the lhm-prod cluster Argo CD.
+# Apply AppProjects first: oc apply -f clusters/lhm-prod/bootstrap/appprojects.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lhm-prod-root
+  namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://github.com/sigaint-au/sigaint-iac
+    targetRevision: main
+    path: clusters/lhm-prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

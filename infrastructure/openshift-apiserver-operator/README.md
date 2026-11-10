@@ -4,9 +4,9 @@ API server TLS / configuration overlays.
 
 | Field | Value |
 |-------|-------|
-| Clusters | `hub`, `ocp` |
+| Clusters | `lhm-prod`, `lhm-dev` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-apiserver-operator/overlays/ocp
-kubectl kustomize infrastructure/openshift-apiserver-operator/overlays/hub
+kubectl kustomize infrastructure/openshift-apiserver-operator/overlays/lhm-dev
+kubectl kustomize infrastructure/openshift-apiserver-operator/overlays/lhm-prod
 ```

@@ -4,14 +4,14 @@ OpenShift Data Foundation (ODF) operator + StorageCluster.
 
 | Field | Value |
 |-------|-------|
-| Clusters | `ocp` (primary), `hub` overlay present |
+| Clusters | `lhm-dev` (primary), `lhm-prod` overlay present |
 | App | `infra-openshift-data-foundation-operator` |
 | Backing | LSO `local-block`, flexible scaling |
 
 ## OCP StorageCluster
 
 ```yaml
-# overlays/ocp/storagecluster.yaml (summary)
+# overlays/lhm-dev/storagecluster.yaml (summary)
 spec:
   flexibleScaling: true
   monDataDirHostPath: /var/lib/rook
@@ -42,7 +42,7 @@ This is **not** the destroy confirmation (`cleanupPolicy.confirmation:
 yes-really-destroy-data`); it only enables reuse of foreign OSD disks.
 
 ```bash
-kubectl kustomize infrastructure/openshift-data-foundation-operator/overlays/ocp
+kubectl kustomize infrastructure/openshift-data-foundation-operator/overlays/lhm-dev
 oc label node <node> cluster.ocs.openshift.io/openshift-storage=''
 oc get storagecluster,cephcluster -n openshift-storage
 oc get cephcluster ocs-storagecluster-cephcluster -n openshift-storage \

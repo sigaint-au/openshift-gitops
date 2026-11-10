@@ -4,13 +4,13 @@ Red Hat Quay registry + CloudNativePG database.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `app-quay` |
 | Namespace | `lhm-prod-quay` |
 | Depends on | `quay-operator`, `cloudnative-pg-operator`, External Secrets |
 
 ```bash
-kubectl kustomize applications/quay/overlays/ocp
+kubectl kustomize applications/quay/overlays/lhm-dev
 oc get quayregistry -n lhm-prod-quay
 oc get cluster -n lhm-prod-quay
 ```

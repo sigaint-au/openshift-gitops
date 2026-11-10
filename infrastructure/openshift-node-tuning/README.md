@@ -6,12 +6,12 @@ cluster-core.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-openshift-node-tuning` |
 | Namespace | `openshift-cluster-node-tuning-operator` |
 
 ```bash
-kubectl kustomize infrastructure/openshift-node-tuning/overlays/ocp
+kubectl kustomize infrastructure/openshift-node-tuning/overlays/lhm-dev
 oc get tuned -n openshift-cluster-node-tuning-operator
 oc get profile -n openshift-cluster-node-tuning-operator
 ```

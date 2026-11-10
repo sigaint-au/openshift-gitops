@@ -4,7 +4,7 @@ SSH public-key secrets for KubeVirt VMs (External Secrets → Doppler).
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `virt-access-credentials` |
 
 ## Secrets (per namespace)
@@ -25,7 +25,7 @@ nullBytePolicy: Ignore
 ```
 
 ```bash
-kubectl kustomize virtualization/access-credentials/overlays/ocp
+kubectl kustomize virtualization/access-credentials/overlays/lhm-dev
 oc get externalsecret,secret -n lhm-prod-dmz
 oc get externalsecret,secret -n lhm-prod-vmnet
 ```

@@ -14,7 +14,7 @@ while IFS= read -r -d '' kust; do
   dir="$(dirname "$kust")"
   # Only build overlays and cluster entrypoints
   case "$dir" in
-    */overlays/*|clusters/hub|clusters/ocp) ;;
+    */overlays/*|clusters/lhm-prod|clusters/lhm-dev) ;;
     *) continue ;;
   esac
 

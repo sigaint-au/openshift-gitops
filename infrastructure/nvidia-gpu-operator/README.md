@@ -5,7 +5,7 @@ of **Quadro P400 (GP107GL)**.
 
 | Field | Value |
 |-------|-------|
-| Cluster | `ocp` |
+| Cluster | `lhm-dev` |
 | App | `infra-nvidia-gpu-operator` |
 | Channel | `stable` · catalog `certified-operators` |
 | Namespace | `nvidia-gpu-operator` |
@@ -13,7 +13,7 @@ of **Quadro P400 (GP107GL)**.
 | Registries | `registry.connect.redhat.com`, `nvcr.io` (see image config) |
 
 ```bash
-kubectl kustomize infrastructure/nvidia-gpu-operator/overlays/ocp
+kubectl kustomize infrastructure/nvidia-gpu-operator/overlays/lhm-dev
 oc get csv,sub,clusterpolicy -n nvidia-gpu-operator
 ```
 
@@ -31,7 +31,7 @@ oc debug node/<node> -- chroot /host lspci -nnk -d 10de:
 ```
 
 HyperConverged resource name: **`nvidia.com/GP107GL_QUADRO_P400`**  
-(`infrastructure/virtualization-operator/overlays/ocp/hyperconverged.yaml`)
+(`infrastructure/virtualization-operator/overlays/lhm-dev/hyperconverged.yaml`)
 
 ## Layout
 
@@ -41,7 +41,7 @@ base/instance/
   worker-iommu-karg.yaml   # worker kernel args
   master-iommu-karg.yaml   # master kernel args
   cluster-policy.yaml      # ClusterPolicy gpu-cluster-policy
-overlays/ocp/
+overlays/lhm-dev/
 ```
 
 ## MachineConfigs (IOMMU)
