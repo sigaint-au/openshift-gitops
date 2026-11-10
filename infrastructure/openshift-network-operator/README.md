@@ -9,7 +9,7 @@ Cluster Network Operator (`Network` CR) — OVN gateway + cluster MTU.
 
 | Setting | Value |
 |---------|-------|
-| OVN MTU | CNO default (8900 deferred — needs post-install migration procedure) |
+| OVN MTU | migrating 1400 → 8900 (`mtu-migration.yaml` prod overlay, remove when `status.clusterNetworkMTU == 8900`) |
 | `routingViaHost` | `true` |
 | `ipForwarding` | `Global` |
 
