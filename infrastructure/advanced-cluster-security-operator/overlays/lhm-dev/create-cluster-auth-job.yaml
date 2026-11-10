@@ -31,7 +31,7 @@ spec:
             - name: DEFAULT_ROLE
               value: Analyst
             - name: UI_ENDPOINT
-              value: rhacs-central.apps.ocp.sigaint.au
+              value: rhacs-central.apps.ocp.lhm.dev.sigaint.au
           command:
             - /bin/bash
             - -c

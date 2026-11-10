@@ -1,0 +1,32 @@
+# Replace lists so re-syncs stay idempotent (op: add fails when keys exist).
+# registry.connect.redhat.com is required for certified-operators bundles
+# (e.g. NVIDIA gpu-operator-bundle). nvcr.io hosts NVIDIA driver/runtime images.
+- op: replace
+  path: /spec/registrySources/allowedRegistries
+  value:
+    - quay.sigaint.au
+    - quay.io
+    - quay.io/openshift-release-dev
+    - image-registry.openshift-image-registry.svc
+    - image-registry.openshift-image-registry.svc:5000
+    - ghcr.io
+    - registry.redhat.io
+    - registry.access.redhat.com
+    - registry.connect.redhat.com
+    - nvcr.io
+    - docker.io
+    - registry.k8s.io
+- op: replace
+  path: /spec/allowedRegistriesForImport
+  value:
+    - domainName: quay.sigaint.au
+    - domainName: quay.io
+    - domainName: image-registry.openshift-image-registry.svc
+    - domainName: image-registry.openshift-image-registry.svc:5000
+    - domainName: ghcr.io
+    - domainName: registry.redhat.io
+    - domainName: registry.access.redhat.com
+    - domainName: registry.connect.redhat.com
+    - domainName: nvcr.io
+    - domainName: docker.io
+    - domainName: registry.k8s.io

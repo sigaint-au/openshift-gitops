@@ -1,0 +1,23 @@
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ScanSettingBinding
+metadata:
+  annotations:
+    owner: stackrox
+  name: weekly-scan
+  namespace: openshift-compliance
+  labels:
+    app.kubernetes.io/created-by: sensor
+    app.kubernetes.io/managed-by: sensor
+    app.kubernetes.io/name: stackrox
+profiles:
+  # ocp4-e8 is covered via TailoredProfile e8-additional-scc (extends ocp4-e8).
+  # Binding only the tailored profile avoids a duplicate base E8 scan.
+  - apiGroup: compliance.openshift.io/v1alpha1
+    kind: TailoredProfile
+    name: e8-additional-scc
+settingsRef:
+  apiGroup: compliance.openshift.io/v1alpha1
+  kind: ScanSetting
+  name: weekly-scan
+spec: {}
+

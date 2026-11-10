@@ -1,0 +1,49 @@
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: physnet1-external-eno2
+spec:
+  desiredState:
+    interfaces:
+      # Host/machine MTU for 9k jumbo (cluster network uses 8900 OVN overhead).
+      - name: eno2
+        type: ethernet
+        state: up
+        mtu: 9000
+      - bridge:
+          allow-extra-patch-ports: true
+          options:
+            mcast-snooping-enable: true
+            stp: false
+          port:
+            - name: eno2
+        name: ovs-br1
+        state: up
+        type: ovs-bridge
+    ovn:
+      # localnet names must match NAD CNI "name" / NetworkAttachmentDefinition metadata.name
+      bridge-mappings:
+        - bridge: ovs-br1
+          localnet: mgmt-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: secure-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: security-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: user-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: server-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: dmz-lhm-prod
+          state: present
+        - bridge: ovs-br1
+          localnet: vmnet-lhm-prod
+          state: present
+  nodeSelector:
+    sigaint.au/physnet: eno2
