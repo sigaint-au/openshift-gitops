@@ -110,7 +110,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 443
-      targetPort: https
+      targetPort: 8443
       protocol: TCP
       name: https
   selector:
@@ -141,12 +141,13 @@ spec:
           args:
             - --tls-cert-file=/tls/tls.crt
             - --tls-private-key-file=/tls/tls.key
+            - --secure-port=8443
           env:
             - name: GROUP_NAME
               value: acme.sigaint.au
           ports:
             - name: https
-              containerPort: 443
+              containerPort: 8443
               protocol: TCP
           livenessProbe:
             httpGet:
