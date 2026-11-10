@@ -26,4 +26,4 @@ patches:
       value: openshift-operators
     - op: replace
       path: /spec/channel
-      value: stable-3.16
+      value: stable-3.18

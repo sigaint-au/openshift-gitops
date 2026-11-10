@@ -14,7 +14,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/channel
-        value: 'stable-3.16'
+        value: 'stable-3.18'
     target:
       kind: Subscription
       name: container-security-operator
