@@ -1,7 +1,8 @@
 # Managed via Server-Side Apply. Unmanaged fields stay owned by the CNO.
 #
-# Cluster network MTU 8900 for 9k jumbo (machine MTU 9000 minus 100-byte
-# OVN-Kubernetes overlay overhead). See README.md.
+# NOTE: cluster MTU intentionally left at CNO default. A previous 8900 setting
+# was refused post-install ("cannot change MTU without migration"); 9k jumbo
+# needs the documented migration procedure in a maintenance window.
 apiVersion: operator.openshift.io/v1
 kind: Network
 metadata:
@@ -11,7 +12,6 @@ metadata:
 spec:
   defaultNetwork:
     ovnKubernetesConfig:
-      mtu: 8900
       gatewayConfig:
         # Required for Istio ambient mode and multi-homed / MetalLB forwarding.
         routingViaHost: true
