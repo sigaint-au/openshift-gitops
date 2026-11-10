@@ -45,8 +45,9 @@ spec:
             wave: "0"
           - name: loki-operator
             wave: "0"
-          - name: cloudnative-pg-operator
-            wave: "0"
+          # Disabled: not yet published in OCP 5.0 certified-operators catalog.
+          #- name: cloudnative-pg-operator
+          #  wave: "0"
           # Disabled: requires more resources than currently available on dev nodes.
           #- name: quay-operator
           #  wave: "0"
@@ -56,8 +57,9 @@ spec:
             wave: "-5"
           - name: virtualization-operator
             wave: "0"
-          - name: nvidia-gpu-operator
-            wave: "5"
+          # Disabled: not yet published in OCP 5.0 certified-operators catalog.
+          #- name: nvidia-gpu-operator
+          #  wave: "5"
           - name: kube-descheduler-operator
             wave: "5"
           # Disabled: requires more resources than currently available on dev nodes.
