@@ -47,7 +47,6 @@ spec:
             - matchExpressions:
                 - key: node-role.kubernetes.io/worker
                   operator: Exists
-  manageNodes: false
   arbiter: {}
   encryption:
     enable: false
