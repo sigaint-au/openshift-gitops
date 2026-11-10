@@ -11,8 +11,6 @@ spec:
   monDataDirHostPath: /var/lib/rook
   resourceProfile: lean
   flexibleScaling: true
-  mon:
-    count: 3
   managedResources:
     # Propagated to CephCluster; wipe disks reused from a prior Ceph install.
     cephCluster:
