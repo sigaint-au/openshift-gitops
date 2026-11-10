@@ -39,7 +39,7 @@ spec:
     spec:
       project: infrastructure
       source:
-        repoURL: https://github.com/sigaint-au/sigaint-iac
+        repoURL: https://github.com/sigaint-au/openshift-gitops
         targetRevision: main
         path: 'infrastructure/{{.name}}/overlays/lhm-prod'
       destination:

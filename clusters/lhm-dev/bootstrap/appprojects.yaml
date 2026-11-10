@@ -9,7 +9,7 @@ metadata:
 spec:
   description: Cluster operators and platform configuration
   sourceRepos:
-    - https://github.com/sigaint-au/sigaint-iac
+    - https://github.com/sigaint-au/openshift-gitops
     - https://github.com/redhat-cop/gitops-catalog
     - https://github.com/mhahl/gitops-catalog
   destinations:
@@ -33,7 +33,7 @@ metadata:
 spec:
   description: Workload applications (registry, logging)
   sourceRepos:
-    - https://github.com/sigaint-au/sigaint-iac
+    - https://github.com/sigaint-au/openshift-gitops
   destinations:
     # Workload namespaces: lhm-<env>-<app> (e.g. lhm-prod-quay)
     - namespace: 'lhm-*'
@@ -66,7 +66,7 @@ metadata:
 spec:
   description: OpenShift Virtualization workloads and multi-network config
   sourceRepos:
-    - https://github.com/sigaint-au/sigaint-iac
+    - https://github.com/sigaint-au/openshift-gitops
   destinations:
     # Virt / shared workload namespaces: lhm-<env>-<role> (e.g. lhm-prod-dmz, lhm-dev-vmnet)
     - namespace: 'lhm-*'

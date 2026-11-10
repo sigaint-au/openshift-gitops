@@ -1,6 +1,6 @@
 # sigaint-iac
 
-[![validate](https://github.com/sigaint-au/sigaint-iac/actions/workflows/validate.yaml/badge.svg)](https://github.com/sigaint-au/sigaint-iac/actions/workflows/validate.yaml)
+[![validate](https://github.com/sigaint-au/openshift-gitops/actions/workflows/validate.yaml/badge.svg)](https://github.com/sigaint-au/openshift-gitops/actions/workflows/validate.yaml)
 
 | Cluster | Bootstrap |
 |---------|-----------|
@@ -14,14 +14,14 @@
 
 Workload / virt namespaces: `lhm-<env>-*` (e.g. `lhm-prod-quay`).
 
-Repo: `https://github.com/sigaint-au/sigaint-iac`
+Repo: `https://github.com/sigaint-au/openshift-gitops`
 
 ## Bootstrap
 
 Apply only this cluster’s bootstrap on that cluster.
 
 ```bash
-git clone https://github.com/sigaint-au/sigaint-iac.git && cd sigaint-iac
+git clone https://github.com/sigaint-au/openshift-gitops.git && cd sigaint-iac
 ```
 
 ### 1. OpenShift GitOps

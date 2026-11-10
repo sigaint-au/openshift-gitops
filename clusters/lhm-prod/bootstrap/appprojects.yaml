@@ -9,7 +9,7 @@ metadata:
 spec:
   description: Hub cluster operators and platform configuration
   sourceRepos:
-    - https://github.com/sigaint-au/sigaint-iac
+    - https://github.com/sigaint-au/openshift-gitops
     - https://github.com/redhat-cop/gitops-catalog
   destinations:
     - namespace: '*'

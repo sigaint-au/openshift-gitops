@@ -25,7 +25,7 @@ spec:
     spec:
       project: virtualization
       source:
-        repoURL: https://github.com/sigaint-au/sigaint-iac
+        repoURL: https://github.com/sigaint-au/openshift-gitops
         targetRevision: main
         path: 'virtualization/{{.name}}/overlays/lhm-dev'
       destination:
