@@ -83,6 +83,21 @@ spec:
         path: 'infrastructure/{{.name}}/overlays/lhm-prod'
       destination:
         server: https://kubernetes.default.svc
+      ignoreDifferences:
+        # virt-platform-autopilot owns these specs (platform.kubevirt.io/managed-by).
+        # Argo ensures the CR exists; autopilot manages fields. Stops selfHeal flap.
+        - group: operator.openshift.io
+          kind: KubeDescheduler
+          name: cluster
+          namespace: openshift-kube-descheduler-operator
+          jsonPointers:
+            - /spec
+        - group: hco.kubevirt.io
+          kind: HyperConverged
+          name: kubevirt-hyperconverged
+          namespace: openshift-cnv
+          jsonPointers:
+            - /spec
       syncPolicy:
         automated:
           prune: true
