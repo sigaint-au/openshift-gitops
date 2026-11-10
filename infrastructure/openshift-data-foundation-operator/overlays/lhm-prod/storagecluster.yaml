@@ -9,7 +9,7 @@ metadata:
     uninstall.ocs.openshift.io/mode: graceful
 spec:
   monDataDirHostPath: /var/lib/rook
-  resourcesProfile: lean
+  resourceProfile: lean
   flexibleScaling: true
   mon:
     count: 3
