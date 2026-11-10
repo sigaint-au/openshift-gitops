@@ -18,7 +18,8 @@ spec:
         wipeDevicesFromOtherClusters: true
   storageDeviceSets:
     - name: ocs-deviceset
-      count: 18
+      # count × replica = total OSDs: 6 × 3 = 18 (6 disks/node, 1 spare disk/node).
+      count: 6
       replica: 3
       portable: false
       dataPVCTemplate:
