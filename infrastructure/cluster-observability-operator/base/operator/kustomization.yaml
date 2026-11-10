@@ -3,5 +3,6 @@ kind: Kustomization
 components:
   - ../../../../components/operator-sync-wave
 resources:
+    - namespace.yaml
     - operatorgroup.yaml
     - subscription.yaml
