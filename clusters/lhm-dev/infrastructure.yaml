@@ -104,12 +104,6 @@ spec:
           namespace: openshift-cnv
           jsonPointers:
             - /spec
-        # ODF/pipelines operators own ConsolePlugin specs (backend/proxy).
-        # Argo ensures the CR exists; operator manages fields. Stops console restarts.
-        - group: console.openshift.io
-          kind: ConsolePlugin
-          jsonPointers:
-            - /spec
       syncPolicy:
         automated:
           prune: true
