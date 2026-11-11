@@ -13,7 +13,7 @@ Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 
 > Admin-only public-key Secret (`ssh-pubkey-lhm-admin`, sourced from Doppler `SSH_PUBKEY_LHM_ADMIN`). User key and `-sk` mirrors retired.
 >
-> IPA enrollment: `ext-ipa-enroll` → Secret `ipa-enroll-userdata` (single `userData` key, templated from Doppler `IPA_PRINCIPAL` + `IPA_PASSWORD`). Consume via `volumes.cloudInitNoCloud.secretRef`. No secret material in git.
+> IPA enrollment: `ext-ipa-enroll` → Secret `ipa-enroll-userdata` (single `userData` key, synced verbatim from Doppler `IPA_USERDATA`). Consume via `volumes.cloudInitNoCloud.secretRef`. The rendered cloud-config (with credentials) lives in Doppler, not git — the installed ESO CRD schema does not declare `spec.template`, so no in-cluster templating. No secret material in git.
 
 ```yaml
 # remoteRef (all keys)
