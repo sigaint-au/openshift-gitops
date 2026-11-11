@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ocp-lhm-prod/dhcp-shim.yaml
+  - ocp-lhm-prod/dmz-lhm-prod.yaml
+  - ocp-lhm-prod/mgmt-lhm-prod.yaml
+  - ocp-lhm-prod/secure-lhm-prod.yaml
+  - ocp-lhm-prod/security-lhm-prod.yaml
+  - ocp-lhm-prod/server-lhm-prod.yaml
+  - ocp-lhm-prod/user-lhm-prod.yaml
+  - ocp-lhm-prod/vmnet-lhm-prod.yaml
+  - ocp-lhm-dev/dhcp-shim.yaml
+  - ocp-lhm-dev/dmz-lhm-prod.yaml
+  - ocp-lhm-dev/mgmt-lhm-prod.yaml
+  - ocp-lhm-dev/secure-lhm-prod.yaml
+  - ocp-lhm-dev/security-lhm-prod.yaml
+  - ocp-lhm-dev/server-lhm-prod.yaml
+  - ocp-lhm-dev/user-lhm-prod.yaml
+  - ocp-lhm-dev/vmnet-lhm-prod.yaml

@@ -1,0 +1,18 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: user-lhm-prod
+  namespace: ocp-lhm-prod
+  annotations:
+    description: "VLAN 13 USER — end users / clients (10.120.13.0/24, 2404:e80:4b6f:13::/64)"
+spec:
+  config: |-
+    {
+      "cniVersion": "0.3.1",
+      "name": "user-lhm-prod",
+      "type": "ovn-k8s-cni-overlay",
+      "topology": "localnet",
+      "vlanID": 13,
+      "mtu": 9000,
+      "netAttachDefName": "ocp-lhm-prod/user-lhm-prod"
+    }

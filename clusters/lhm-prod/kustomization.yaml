@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: openshift-gitops
 resources:
   - infrastructure.yaml
+  - virtualization.yaml

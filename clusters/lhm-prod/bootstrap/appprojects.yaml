@@ -22,3 +22,36 @@ spec:
       kind: '*'
   orphanedResources:
     warn: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: virtualization
+  namespace: openshift-gitops
+spec:
+  description: OpenShift Virtualization workloads and multi-network config
+  sourceRepos:
+    - https://github.com/sigaint-au/openshift-gitops
+  destinations:
+    # Virt / shared workload namespaces: lhm-<env>-<role> (e.g. lhm-prod-dmz, lhm-dev-vmnet)
+    - namespace: 'lhm-*'
+      server: https://kubernetes.default.svc
+    # Secondary-net workload namespaces (NAD stamped copies)
+    - namespace: 'ocp-*'
+      server: https://kubernetes.default.svc
+    - namespace: default
+      server: https://kubernetes.default.svc
+    - namespace: openshift-cnv
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: k8s.cni.cncf.io
+      kind: NetworkAttachmentDefinition
+    - group: nmstate.io
+      kind: NodeNetworkConfigurationPolicy
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true

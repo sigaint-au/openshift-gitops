@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: lhm-prod-virtualization
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - name: namespaces
+            wave: "30"
+          - name: network-attachment-definitions
+            wave: "35"
+  template:
+    metadata:
+      name: 'virt-{{.name}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{.wave}}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: virtualization
+      source:
+        repoURL: https://github.com/sigaint-au/openshift-gitops
+        targetRevision: main
+        path: 'virtualization/{{.name}}/overlays/lhm-prod'
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 10s
+            factor: 2
+            maxDuration: 3m
