@@ -16,9 +16,3 @@ apiVersion: v1
 metadata:
   name: lhm-prod-monitoring
 spec: {}
----
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: lhm-prod-quay
-spec: {}
