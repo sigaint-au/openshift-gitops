@@ -68,6 +68,10 @@ spec:
   sourceRepos:
     - https://github.com/sigaint-au/openshift-gitops
   destinations:
+    # '*' covers cluster-scoped resources (Namespace) whose destination
+    # namespace is empty; without it apps stay InvalidSpecError/Unknown.
+    - namespace: '*'
+      server: https://kubernetes.default.svc
     # Virt / shared workload namespaces: lhm-<env>-<role> (e.g. lhm-prod-dmz, lhm-dev-vmnet)
     - namespace: 'lhm-*'
       server: https://kubernetes.default.svc
