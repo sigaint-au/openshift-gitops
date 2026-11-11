@@ -11,10 +11,7 @@ SSH public-key secrets for KubeVirt VMs (External Secrets → Doppler).
 
 Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 
-> Admin-only public-key Secret (`ssh-pubkey-lhm-admin`, sourced from Doppler `SSH_PUBKEY_LHM_ADMIN`). User key and `-sk` mirrors retired.
->
-> IPA enrollment: `ext-ipa-enroll` → Secret `ipa-enroll-userdata` (single `userData` key, synced verbatim from Doppler `IPA_USERDATA`). Consume via `volumes.cloudInitNoCloud.secretRef`. The rendered cloud-config (with credentials) lives in Doppler, not git — the installed ESO CRD schema does not declare `spec.template`, so no in-cluster templating. No secret material in git.
-
+> IPA enrollment retired — did not behave as expected. Public-key Secret only.
 ```yaml
 # remoteRef (all keys)
 conversionStrategy: Default
