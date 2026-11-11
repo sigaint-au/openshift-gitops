@@ -13,6 +13,8 @@ spec:
             wave: "30"
           - name: network-attachment-definitions
             wave: "35"
+          - name: access-credentials
+            wave: "35"
   template:
     metadata:
       name: 'virt-{{.name}}'

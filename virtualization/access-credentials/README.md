@@ -15,6 +15,8 @@ Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 |----------------|--------|-------------|
 | `ext-sk-lhm-prod-admin` | `ssh-pubkey-lhm-admin` | `SSH_PUBKEY_LHM_ADMIN` |
 | `ext-sk-lhm-prod-user` | `ssh-pubkey-lhm-user` | `SSH_PUBKEY_LHM_USER` |
+| `ext-sk-lhm-prod-admin-sk` | `ssh-sk-lhm-admin` | `SSH_PUBKEY_LHM_ADMIN` |
+| `ext-sk-lhm-prod-user-sk` | `ssh-sk-lhm-user` | `SSH_PUBKEY_LHM_USER` |
 
 ```yaml
 # remoteRef (all keys)
