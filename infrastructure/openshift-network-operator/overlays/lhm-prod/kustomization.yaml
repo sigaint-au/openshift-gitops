@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
-  - path: mtu-migration.yaml
+  - path: mtu-8900.yaml
     target:
       group: operator.openshift.io
       kind: Network
