@@ -2,7 +2,7 @@ apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
   name: user-lhm-prod
-  namespace: ocp-lhm-prod
+  namespace: default
   annotations:
     description: "VLAN 13 USER — end users / clients (10.120.13.0/24, 2404:e80:4b6f:13::/64)"
 spec:
@@ -14,5 +14,5 @@ spec:
       "topology": "localnet",
       "vlanID": 13,
       "mtu": 9000,
-      "netAttachDefName": "ocp-lhm-prod/user-lhm-prod"
+      "netAttachDefName": "default/user-lhm-prod"
     }

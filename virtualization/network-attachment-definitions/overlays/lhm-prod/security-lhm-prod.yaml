@@ -2,7 +2,7 @@ apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
   name: security-lhm-prod
-  namespace: ocp-lhm-prod
+  namespace: default
   annotations:
     description: "VLAN 12 SECURITY — security appliances (10.120.12.0/24, 2404:e80:4b6f:12::/64)"
 spec:
@@ -14,5 +14,5 @@ spec:
       "topology": "localnet",
       "vlanID": 12,
       "mtu": 9000,
-      "netAttachDefName": "ocp-lhm-prod/security-lhm-prod"
+      "netAttachDefName": "default/security-lhm-prod"
     }

@@ -2,7 +2,7 @@ apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
   name: server-lhm-prod
-  namespace: ocp-lhm-dev
+  namespace: default
   annotations:
     description: "VLAN 14 SERVER — servers / proxy-arp VIPs (10.120.14.0/24, 2404:e80:4b6f:14::/64)"
 spec:
@@ -14,5 +14,5 @@ spec:
       "topology": "localnet",
       "vlanID": 14,
       "mtu": 9000,
-      "netAttachDefName": "ocp-lhm-dev/server-lhm-prod"
+      "netAttachDefName": "default/server-lhm-prod"
     }

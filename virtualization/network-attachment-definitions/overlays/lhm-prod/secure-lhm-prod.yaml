@@ -2,7 +2,7 @@ apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
   name: secure-lhm-prod
-  namespace: ocp-lhm-prod
+  namespace: default
   annotations:
     description: "VLAN 11 SECURE — secure workloads (10.120.11.0/24, 2404:e80:4b6f:11::/64)"
 spec:
@@ -14,5 +14,5 @@ spec:
       "topology": "localnet",
       "vlanID": 11,
       "mtu": 9000,
-      "netAttachDefName": "ocp-lhm-prod/secure-lhm-prod"
+      "netAttachDefName": "default/secure-lhm-prod"
     }
