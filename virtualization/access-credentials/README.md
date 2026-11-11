@@ -11,12 +11,7 @@ SSH public-key secrets for KubeVirt VMs (External Secrets → Doppler).
 
 Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 
-| ExternalSecret | Secret | Doppler key |
-|----------------|--------|-------------|
-| `ext-sk-lhm-prod-admin` | `ssh-pubkey-lhm-admin` | `SSH_PUBKEY_LHM_ADMIN` |
-| `ext-sk-lhm-prod-user` | `ssh-pubkey-lhm-user` | `SSH_PUBKEY_LHM_USER` |
-| `ext-sk-lhm-prod-admin-sk` | `ssh-sk-lhm-admin` | `SSH_PUBKEY_LHM_ADMIN` |
-| `ext-sk-lhm-prod-user-sk` | `ssh-sk-lhm-user` | `SSH_PUBKEY_LHM_USER` |
+> **Retired.** All SSH access-credentials removed from GitOps; public keys remain in Doppler (`SSH_PUBKEY_LHM_*`). In-cluster Secrets deleted on prod; dev Secrets linger until its Argo sync prunes.
 
 ```yaml
 # remoteRef (all keys)

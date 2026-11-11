@@ -1,13 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  # lhm-prod-dmz
-  - lhm-prod-dmz/ext-sk-lhm-prod-admin.yaml
-  - lhm-prod-dmz/ext-sk-lhm-prod-user.yaml
-  - lhm-prod-dmz/ext-sk-lhm-prod-admin-sk.yaml
-  - lhm-prod-dmz/ext-sk-lhm-prod-user-sk.yaml
-  # lhm-prod-vmnet
-  - lhm-prod-vmnet/ext-sk-lhm-prod-admin.yaml
-  - lhm-prod-vmnet/ext-sk-lhm-prod-user.yaml
-  - lhm-prod-vmnet/ext-sk-lhm-prod-admin-sk.yaml
-  - lhm-prod-vmnet/ext-sk-lhm-prod-user-sk.yaml
+# Retired: SSH access-credentials removed (public keys remain in Doppler).
+# Resources list intentionally empty; overlays build to nothing.
+resources: []
