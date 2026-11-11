@@ -11,7 +11,7 @@ SSH public-key secrets for KubeVirt VMs (External Secrets → Doppler).
 
 Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 
-> Public-key Secrets restored (`ssh-pubkey-*`, sourced from Doppler `SSH_PUBKEY_LHM_*`). The `-sk` mirrors were retired as misleading duplicates — no private key material exists in Doppler for them.
+> Admin-only public-key Secret (`ssh-pubkey-lhm-admin`, sourced from Doppler `SSH_PUBKEY_LHM_ADMIN`). User key and `-sk` mirrors retired.
 
 ```yaml
 # remoteRef (all keys)
