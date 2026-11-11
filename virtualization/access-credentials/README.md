@@ -12,6 +12,8 @@ SSH public-key secrets for KubeVirt VMs (External Secrets → Doppler).
 Namespaces: **`lhm-prod-dmz`**, **`lhm-prod-vmnet`**.
 
 > Admin-only public-key Secret (`ssh-pubkey-lhm-admin`, sourced from Doppler `SSH_PUBKEY_LHM_ADMIN`). User key and `-sk` mirrors retired.
+>
+> IPA enrollment: `ext-ipa-enroll` → Secret `ipa-enroll-userdata` (single `userData` key, templated from Doppler `IPA_PRINCIPAL` + `IPA_PASSWORD`). Consume via `volumes.cloudInitNoCloud.secretRef`. No secret material in git.
 
 ```yaml
 # remoteRef (all keys)

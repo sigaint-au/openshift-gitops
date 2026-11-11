@@ -1,0 +1,49 @@
+---
+# IPA enrollment userData for KubeVirt VMs (External Secret → Doppler).
+# Doppler holds IPA_PRINCIPAL + IPA_PASSWORD; this manifest never does.
+# Target Secret `ipa-enroll-userdata` carries a single `userData` key,
+# consumed via volumes.cloudInitNoCloud.secretRef.
+# Idempotent: installer skipped when /etc/ipa/default.conf exists.
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ext-ipa-enroll
+  namespace: lhm-prod-dmz
+  annotations:
+    argocd.argoproj.io/sync-wave: "15"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: doppler-auth-api
+  target:
+    name: ipa-enroll-userdata
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: principal
+      remoteRef:
+        key: IPA_PRINCIPAL
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
+    - secretKey: password
+      remoteRef:
+        key: IPA_PASSWORD
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
+        nullBytePolicy: Ignore
+  template:
+    data:
+      userData: |
+        #cloud-config
+        package_update: true
+        packages:
+          - ipa-client
+          - oddjob-mkhomedir
+        runcmd:
+          - systemctl enable --now oddjobd
+          - test -f /etc/ipa/default.conf || ipa-client-install --server=idm-4c5e.syd.prod.sigaint.au --domain=sigaint.au --realm=SIGAINT.AU --principal='{{ .principal }}' --password='{{ .password }}' --mkhomedir --no-ntp --unattended
